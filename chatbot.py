@@ -1,15 +1,11 @@
 # chatbot.py
+import pymysql
 import telegram
 from telegram import Update
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
-# The messageHandler is used for all message updates
+
 import configparser
 import logging
-# import redis
-# import os
-
-#global redis1
-import pymysql
 
 
 def db_connect():
@@ -77,8 +73,8 @@ Please select the following functions:
 ex: /photo victoria, /photo changzhou
 2. Type '/video' to see cooking videos 
 ex: /video cooking
-3. Type '/review' to read TV show reviews
-ex: /review read''')
+3. Type '/review' to write/read TV show reviews
+ex: /review write, /review read''')
 
 
 def photo(update: Update, context: CallbackContext) -> None:
@@ -101,12 +97,11 @@ def video(update: Update, context: CallbackContext) -> None:
 
 def review(update: Update, context: CallbackContext) -> None:
     msg = context.args[0]
-    # if msg == 'write':
-    #     movie_name = context.args[1]
-    #     movie_review = context.args[2]
-    #     # add_review(movie_name, movie_review)
-    #     print(movie_name, movie_review)
-    if msg == 'read':
+    if msg == 'write':
+        movie_name = context.args[1]
+        movie_review = context.args[2:]
+        add_review(movie_name, movie_review)
+    elif msg == 'read':
         results = show_reviews()
         for i in results:
             update.message.reply_text(i[1] + ': ' + i[2])
