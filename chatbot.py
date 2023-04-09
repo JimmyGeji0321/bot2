@@ -95,14 +95,11 @@ def video(update: Update, context: CallbackContext) -> None:
 
 
 def review(update: Update, context: CallbackContext) -> None:
-    print(context)
-    print(context.args)
     msg = context.args[0]
     if msg == 'write':
-        print("A")
-        # movie_name = context.args[1]
-        # movie_review = context.args[]
-        # add_review(movie_name, movie_review)
+        movie_name = context.args[1]
+        movie_review = ' '.join(context.args[1:])
+        add_review(movie_name, movie_review)
     elif msg == 'read':
         results = show_reviews()
         for i in results:
