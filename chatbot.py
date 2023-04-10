@@ -99,6 +99,7 @@ def review(update: Update, context: CallbackContext) -> None:
     if msg == 'write':
         movie_name = context.args[1]
         movie_review = ' '.join(context.args[1:])
+        print(movie_review)
         add_review(movie_name, movie_review)
     elif msg == 'read':
         results = show_reviews()
