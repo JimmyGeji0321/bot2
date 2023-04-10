@@ -86,14 +86,13 @@ def answer(update: Update, context: CallbackContext) -> None:
         results = show_reviews()
         reviews = ''''''
         for i in results:
-            print(i[1] + ':' + i[2])
             reviews = reviews + i[1] + ''':
             ''' + i[2] + '''
             
             '''
-        update.message.reply_text(reviews)
+        context.bot.send_message(chat_id=update.effective_chat.id, text=reviews)
     elif msg == 'write':
-        update.message.reply_text('''please use the following format:
+        context.bot.send_message(chat_id=update.effective_chat.id, text='''please use the following format:
         /review [movieName] [review]''')
 
 
