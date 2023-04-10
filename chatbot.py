@@ -62,6 +62,12 @@ def main():
     dispatcher.add_handler(CommandHandler("review", review))
     dispatcher.add_handler(CallbackQueryHandler(answer))
 
+    dispatcher.add_handler(CommandHandler('maths', maths))
+    dispatcher.add_handler(CallbackQueryHandler(answer))
+
+    dispatcher.add_handler(CommandHandler('game', game))
+    dispatcher.add_handler(CallbackQueryHandler(play))
+
     # To start the bot:
     updater.start_polling()
     updater.idle()
@@ -140,6 +146,56 @@ def review(update: Update, context: CallbackContext) -> None:
 #             update.message.reply_text(i[1] + ': ' + i[2])
 #     else:
 #         update.message.reply_text("Please input the right command!")
+
+
+def maths(update, context):
+    a, b = randint(1, 100), randint(1, 100)
+    update.message.reply_text('{} + {} = ?'.format(a, b),
+        reply_markup = InlineKeyboardMarkup([[
+                InlineKeyboardButton(str(s), callback_data = '{} {} {}'.format(a, b, s)) for s in range(a + b - randint(1, 3), a + b + randint(1, 3))
+            ]]))
+
+def answer(update, context):
+    a, b, s = [int(x) for x in update.callback_query.data.split()]
+    if a + b == s:
+        update.callback_query.edit_message_text('Right！')
+    else:
+        update.callback_query.edit_message_text('Wrong！')
+
+
+hands = ['rock', 'paper', 'scissors']
+
+emoji = {
+    'rock': '👊',
+    'paper': '✋',
+    'scissors': '✌️'
+}
+
+def game(update, context):
+    update.message.reply_text('剪刀石頭布！',
+        reply_markup = InlineKeyboardMarkup([[
+                InlineKeyboardButton(emoji, callback_data = hand) for hand, emoji in emoji.items()
+            ]]))
+
+def judge(mine, yours):
+    if mine == yours:
+        return '平手'
+    elif (hands.index(mine) - hands.index(yours)) % 3 == 1:
+        return '我贏了'
+    else:
+        return '我輸了'
+
+def play(update, context):
+    try:
+        mine = random.choice(hands)
+        yours = update.callback_query.data
+        update.callback_query.edit_message_text('我出{}，你出{}，{}！'.format(emoji[mine], emoji[yours], judge(mine, yours)))
+    except Exception as e:
+        print(e)
+
+
+
+
 
 
 if __name__ == '__main__':
