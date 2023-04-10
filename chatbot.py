@@ -1,7 +1,7 @@
 # chatbot.py
 import pymysql
 from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext, CallbackQueryHandler
 
 import configparser
 import logging
@@ -49,14 +49,15 @@ def main():
     logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                         level=logging.INFO)
 
-    # # register a dispatcher to handle message: here we register an echo dispatcher
+    # # register a dispatcher to handle message:
     menu_handler = MessageHandler(Filters.text & (~Filters.command), show_menu)
     dispatcher.add_handler(menu_handler)
 
     # # on different commands - answer in Telegram
-    dispatcher.add_handler(CommandHandler("photo", photo))
-    dispatcher.add_handler(CommandHandler("video", video))
+    # dispatcher.add_handler(CommandHandler("photo", photo))
+    # dispatcher.add_handler(CommandHandler("video", video))
     dispatcher.add_handler(CommandHandler("review", review))
+    dispatcher.add_handler(CallbackQueryHandler(answer))
 
     # To start the bot:
     updater.start_polling()
@@ -65,52 +66,68 @@ def main():
 
 def show_menu(update, context):
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
-                   [InlineKeyboardButton(text='McFlurry', callback_data='McFlurry')],
-                   [InlineKeyboardButton(text='Nugget', callback_data='Nugget')],
-                   [InlineKeyboardButton(text='Coke', callback_data='Coke')],
-                   [InlineKeyboardButton(text='Coke', callback_data='Coke')],
-               ])
+        [InlineKeyboardButton(text='display a photo', callback_data='photo')],
+        [InlineKeyboardButton(text='play a cooking video', callback_data='video')],
+        [InlineKeyboardButton(text='read some movie reviews', callback_data='read')],
+        [InlineKeyboardButton(text='write a movie review', callback_data='write')],
+    ])
     update.message.reply_text('''Hello! Welcome to CC chatbot! 
-Please select the following functions:
-
-1. Type '/photo' to see hiking photos 
-ex: /photo victoria, /photo changzhou
-2. Type '/video' to see cooking videos 
-ex: /video cooking
-3. Type '/review' to write/read TV show reviews
-ex: /review write movieName review, /review read''', reply_markup=keyboard)
+Please select the following buttons:
+''', reply_markup=keyboard)
 
 
-def photo(update: Update, context: CallbackContext) -> None:
-    msg = context.args[0]
-    if msg == 'victoria':
+def answer(update: Update, context: CallbackContext) -> None:
+    msg = update.callback_query.data
+    print(msg)
+    if msg == 'photo':
         context.bot.send_photo(chat_id=update.effective_chat.id, photo=open('img/t1-2.jpg', 'rb'))
-    elif msg == 'changzhou':
-        context.bot.send_photo(chat_id=update.effective_chat.id, photo=open('img/t2-2.jpg', 'rb'))
-    else:
-        update.message.reply_text("Sorry, I didn't have any photos related to " + msg + "!")
-
-
-def video(update: Update, context: CallbackContext) -> None:
-    msg = context.args[0]
-    if msg == 'cooking':
+    elif msg == 'video':
         context.bot.send_video(chat_id=update.effective_chat.id, video=open('video/2.mp4', 'rb'))
-    else:
-        update.message.reply_text("Sorry, I didn't have any videos related to " + msg + "!")
-
-
-def review(update: Update, context: CallbackContext) -> None:
-    msg = context.args[0]
-    if msg == 'write':
-        movie_name = context.args[1]
-        movie_review = ' '.join(context.args[1:])
-        add_review(movie_name, movie_review)
     elif msg == 'read':
         results = show_reviews()
         for i in results:
             update.message.reply_text(i[1] + ': ' + i[2])
-    else:
-        update.message.reply_text("Please input the right command!")
+    elif msg == 'write':
+        update.message.reply_text('''please use the following format:
+        /review movieName review''')
+
+
+def review(update: Update, context: CallbackContext) -> None:
+    movie_name = context.args[0]
+    movie_review = ' '.join(context.args[0:])
+    add_review(movie_name, movie_review)
+
+
+# def photo(update: Update, context: CallbackContext) -> None:
+#     msg = context.args[0]
+#     if msg == 'victoria':
+#         context.bot.send_photo(chat_id=update.effective_chat.id, photo=open('img/t1-2.jpg', 'rb'))
+#     elif msg == 'changzhou':
+#         context.bot.send_photo(chat_id=update.effective_chat.id, photo=open('img/t2-2.jpg', 'rb'))
+#     else:
+#         update.message.reply_text("Sorry, I didn't have any photos related to " + msg + "!")
+#
+#
+# def video(update: Update, context: CallbackContext) -> None:
+#     msg = context.args[0]
+#     if msg == 'cooking':
+#         context.bot.send_video(chat_id=update.effective_chat.id, video=open('video/2.mp4', 'rb'))
+#     else:
+#         update.message.reply_text("Sorry, I didn't have any videos related to " + msg + "!")
+#
+#
+# def review(update: Update, context: CallbackContext) -> None:
+#     msg = context.args[0]
+#     if msg == 'write':
+#         movie_name = context.args[1]
+#         movie_review = ' '.join(context.args[1:])
+#         add_review(movie_name, movie_review)
+#     elif msg == 'read':
+#         results = show_reviews()
+#         for i in results:
+#             update.message.reply_text(i[1] + ': ' + i[2])
+#     else:
+#         update.message.reply_text("Please input the right command!")
 
 
 if __name__ == '__main__':
