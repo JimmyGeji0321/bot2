@@ -152,7 +152,7 @@ def maths(update, context):
     a, b = randint(1, 100), randint(1, 100)
     update.message.reply_text('{} + {} = ?'.format(a, b),
         reply_markup = InlineKeyboardMarkup([[
-                InlineKeyboardButton(str(s), callback_data = '{} {} {}'.format(a, b, s)) for s in range(a + b - randint(1, 3), a + b + randint(1, 3))
+                InlineKeyboardButton(int(s), callback_data = '{} {} {}'.format(a, b, s)) for s in range(a + b - randint(1, 3), a + b + randint(1, 3))
             ]]))
 
 def answer(update, context):
