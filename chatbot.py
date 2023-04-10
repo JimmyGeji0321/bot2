@@ -156,24 +156,24 @@ emoji = {
 }
 
 def game(update, context):
-    update.message.reply_text('scissors...paper...rock！',
+    update.message.reply_text('剪刀石頭布！',
         reply_markup = InlineKeyboardMarkup([[
                 InlineKeyboardButton(emoji, callback_data = hand) for hand, emoji in emoji.items()
             ]]))
 
 def judge(mine, yours):
     if mine == yours:
-        return 'tie'
+        return '平手'
     elif (hands.index(mine) - hands.index(yours)) % 3 == 1:
-        return 'I win'
+        return '我贏了'
     else:
-        return 'I lose'
+        return '我輸了'
 
 def play(update, context):
     try:
         mine = random.choice(hands)
         yours = update.callback_query.data
-        update.callback_query.edit_message_text('I go{}，you go{}，{}！'.format(emoji[mine], emoji[yours], judge(mine, yours)))
+        update.callback_query.edit_message_text('我出{}，你出{}，{}！'.format(emoji[mine], emoji[yours], judge(mine, yours)))
     except Exception as e:
         print(e)
 
