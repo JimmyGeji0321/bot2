@@ -84,9 +84,14 @@ def answer(update: Update, context: CallbackContext) -> None:
         context.bot.send_video(chat_id=update.effective_chat.id, video=open('video/2.mp4', 'rb'))
     elif msg == 'read':
         results = show_reviews()
+        reviews = ''''''
         for i in results:
-            print(i[1] + ': ' + i[2])
-            update.message.reply_text(i[1] + ': ' + i[2])
+            print(i[1] + ':' + i[2])
+            reviews = reviews + i[1] + ''':
+            ''' + i[2] + '''
+            
+            '''
+        update.message.reply_text(reviews)
     elif msg == 'write':
         update.message.reply_text('''please use the following format:
         /review [movieName] [review]''')
