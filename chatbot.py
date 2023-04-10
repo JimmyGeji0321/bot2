@@ -63,7 +63,7 @@ def main():
     dispatcher.add_handler(CallbackQueryHandler(answer))
 
     dispatcher.add_handler(CommandHandler('game', game))
-    dispatcher.add_handler(CallbackQueryHandler(play))
+    dispatcher.add_handler(CallbackQueryHandler(answer))
 
     # To start the bot:
     updater.start_polling()
@@ -72,12 +72,14 @@ def main():
 
 def show_menu(update, context):
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text='view a photo', callback_data='photo')],
+        [InlineKeyboardButton(text='view a photo of HK', callback_data='photo')],
         [InlineKeyboardButton(text='watch a cooking video', callback_data='video')],
         [InlineKeyboardButton(text='read some movie reviews', callback_data='read')],
         [InlineKeyboardButton(text='write a movie review', callback_data='write')],
+        [InlineKeyboardButton(text='play a maths game', callback_data='game')],
     ])
-    update.message.reply_text('''Hello! Welcome to CC chatbot! 
+    update.message.reply_text('''Hello! Welcome to CC chatbot!
+What can I help you?
 Please select the following buttons:
 ''', reply_markup=keyboard)
 
@@ -102,7 +104,8 @@ def answer(update: Update, context: CallbackContext) -> None:
     elif msg == 'write':
         context.bot.send_message(chat_id=update.effective_chat.id, text='''please use the following format:
 /review [movieName] [review]''')
-
+    elif msg == 'game':
+        results = game()
 
 def review(update: Update, context: CallbackContext) -> None:
     movie_name = context.args[0]
@@ -147,35 +150,19 @@ def review(update: Update, context: CallbackContext) -> None:
 
 
 
-hands = ['rock', 'paper', 'scissors']
-
-emoji = {
-    'rock': '👊',
-    'paper': '✋',
-    'scissors': '✌️'
-}
-
-def game(update, bot):
-    update.message.reply_text('剪刀石頭布！',
+def game(update, context):
+    a, b = randint(1, 100), randint(1, 100)
+    update.message.reply_text('{} + {} = ?'.format(a, b),
         reply_markup = InlineKeyboardMarkup([[
-                InlineKeyboardButton(emoji, callback_data = hand) for hand, emoji in emoji.items()
+                InlineKeyboardButton(str(s), callback_data = '{} {} {}'.format(a, b, s)) for s in range(a + b - randint(1, 3), a + b + randint(1, 3))
             ]]))
 
-def judge(mine, yours):
-    if mine == yours:
-        return '平手'
-    elif (hands.index(mine) - hands.index(yours)) % 3 == 1:
-        return '我贏了'
+def answer(update, context):
+    a, b, s = [int(x) for x in update.callback_query.data.split()]
+    if a + b == s:
+        update.callback_query.edit_message_text('Correct! You must smarter than Grade 1 students :)')
     else:
-        return '我輸了'
-
-def play(update, bot):
-    try:
-        mine = random.choice(hands)
-        yours = update.callback_query.data
-        update.callback_query.edit_message_text('我出{}，你出{}，{}！'.format(emoji[mine], emoji[yours], judge(mine, yours)))
-    except Exception as e:
-        print(e)
+        update.callback_query.edit_message_text('Wrong! OMG, you are even worse than Grade 1 students :(')
 
 
 
