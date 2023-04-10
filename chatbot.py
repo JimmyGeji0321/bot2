@@ -1,6 +1,6 @@
 # chatbot.py
 import pymysql
-from telegram import Update
+from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
 
 import configparser
@@ -54,7 +54,6 @@ def main():
     dispatcher.add_handler(menu_handler)
 
     # # on different commands - answer in Telegram
-    # dispatcher.add_handler(CommandHandler("add", add))
     dispatcher.add_handler(CommandHandler("photo", photo))
     dispatcher.add_handler(CommandHandler("video", video))
     dispatcher.add_handler(CommandHandler("review", review))
@@ -65,6 +64,12 @@ def main():
 
 
 def show_menu(update, context):
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+                   [InlineKeyboardButton(text='McFlurry', callback_data='McFlurry')],
+                   [InlineKeyboardButton(text='Nugget', callback_data='Nugget')],
+                   [InlineKeyboardButton(text='Coke', callback_data='Coke')],
+                   [InlineKeyboardButton(text='Coke', callback_data='Coke')],
+               ])
     update.message.reply_text('''Hello! Welcome to CC chatbot! 
 Please select the following functions:
 
@@ -73,7 +78,7 @@ ex: /photo victoria, /photo changzhou
 2. Type '/video' to see cooking videos 
 ex: /video cooking
 3. Type '/review' to write/read TV show reviews
-ex: /review write movieName review, /review read''')
+ex: /review write movieName review, /review read''', reply_markup=keyboard)
 
 
 def photo(update: Update, context: CallbackContext) -> None:
@@ -99,7 +104,6 @@ def review(update: Update, context: CallbackContext) -> None:
     if msg == 'write':
         movie_name = context.args[1]
         movie_review = ' '.join(context.args[1:])
-        print(movie_review)
         add_review(movie_name, movie_review)
     elif msg == 'read':
         results = show_reviews()
