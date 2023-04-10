@@ -12,7 +12,8 @@ import logging
 def db_connect():
     config = configparser.ConfigParser()
     config.read('config.ini')
-    db = pymysql.connect(host=['AMAZONAWS']['HOST'], user=['AMAZONAWS']['USER'], password=['AMAZONAWS']['PASSWORD'], database=['AMAZONAWS']['DATABASE'])
+    db = pymysql.connect(host=config['AMAZONAWS']['HOST'], user=config['AMAZONAWS']['USER'],
+                         password=config['AMAZONAWS']['PASSWORD'], database=config['AMAZONAWS']['DATABASE'])
     return db
 
 
@@ -84,8 +85,7 @@ def show_menu(update, context):
 What can I help you?
 Please select the following buttons:
 ''', reply_markup=keyboard)
-    update.message.reply_text('''BTW if you want to play a maths game, 
-please type /game''')
+    #update.message.reply_text('''BTW if you want to play a maths game, please type /game''')
 
 def answer(update: Update, context: CallbackContext) -> None:
     msg = update.callback_query.data
