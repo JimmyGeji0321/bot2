@@ -1,6 +1,6 @@
 # chatbot.py
 import random
-
+from random import randint
 import pymysql
 from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext, CallbackQueryHandler
@@ -156,7 +156,7 @@ def maths(update, context):
             ]]))
 
 def answer(update, context):
-    a, b, s = [int(x) for x in update.callback_query.data.split()]
+    a, b, s = [int(i) for i in update.callback_query.data.split()]
     if a + b == s:
         update.callback_query.edit_message_text('Right！')
     else:
