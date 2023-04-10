@@ -76,13 +76,14 @@ def show_menu(update, context):
         [InlineKeyboardButton(text='watch a cooking video', callback_data='video')],
         [InlineKeyboardButton(text='read some movie reviews', callback_data='read')],
         [InlineKeyboardButton(text='write a movie review', callback_data='write')],
-        [InlineKeyboardButton(text='play a maths game', callback_data='game')],
+        #[InlineKeyboardButton(text='play a maths game', callback_data='game')],
     ])
     update.message.reply_text('''Hello! Welcome to CC chatbot!
 What can I help you?
 Please select the following buttons:
 ''', reply_markup=keyboard)
-
+    update.message.reply_text('''BTW if you want to play a maths game, 
+please type /game''')
 
 def answer(update: Update, context: CallbackContext) -> None:
     msg = update.callback_query.data
@@ -104,8 +105,8 @@ def answer(update: Update, context: CallbackContext) -> None:
     elif msg == 'write':
         context.bot.send_message(chat_id=update.effective_chat.id, text='''please use the following format:
 /review [movieName] [review]''')
-    elif msg == 'game':
-        results = game()
+    #elif msg == 'game':
+    #    game()
 
 def review(update: Update, context: CallbackContext) -> None:
     movie_name = context.args[0]
