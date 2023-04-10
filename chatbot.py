@@ -149,14 +149,14 @@ def review(update: Update, context: CallbackContext) -> None:
 
 
 def maths(update, context):
-    'a', 'b' = randint('1', '100'), randint('1', '100')
+    a, b = randint(1, 100), randint(1, 100)
     update.message.reply_text('{} + {} = ?'.format(a, b),
         reply_markup = InlineKeyboardMarkup([[
-                InlineKeyboardButton(str('s'), callback_data = '{} {} {}'.format('a', 'b', 's')) for 's' in range('a' + 'b' - randint('1', '3'), 'a' + 'b' + randint('1', '3'))
+                InlineKeyboardButton(str(s), callback_data = '{} {} {}'.format(a, b, s)) for s in range(a + b - randint(1, 3), a + b + randint(1, 3))
             ]]))
 
 def answer(update, context):
-    'a', 'b', 's' = [str('i') for 'i' in update.callback_query.data.split()]
+    a, b, s = [str(i) for i in update.callback_query.data.split()]
     if 'a' + 'b' == 's':
         update.callback_query.edit_message_text('Right！')
     else:
