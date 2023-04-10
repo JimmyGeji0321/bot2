@@ -78,7 +78,6 @@ Please select the following buttons:
 
 def answer(update: Update, context: CallbackContext) -> None:
     msg = update.callback_query.data
-    print(msg)
     if msg == 'photo':
         context.bot.send_photo(chat_id=update.effective_chat.id, photo=open('img/t1-2.jpg', 'rb'))
     elif msg == 'video':
@@ -86,10 +85,11 @@ def answer(update: Update, context: CallbackContext) -> None:
     elif msg == 'read':
         results = show_reviews()
         for i in results:
+            print(i[1] + ': ' + i[2])
             update.message.reply_text(i[1] + ': ' + i[2])
     elif msg == 'write':
         update.message.reply_text('''please use the following format:
-        /review movieName review''')
+        /review [movieName] [review]''')
 
 
 def review(update: Update, context: CallbackContext) -> None:
