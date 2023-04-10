@@ -10,7 +10,9 @@ import logging
 
 
 def db_connect():
-    db = pymysql.connect(host='cloudcomputing.c8zsz8bm7sbi.us-east-1.rds.amazonaws.com', user='admin', password='swQ50wDD9xXEuGZwDpva', database='chatbot')
+    config = configparser.ConfigParser()
+    config.read('config.ini')
+    db = pymysql.connect(host=['AMAZONAWS']['HOST'], user=['AMAZONAWS']['USER'], password=['AMAZONAWS']['PASSWORD'], database=['AMAZONAWS']['DATABASE'])
     return db
 
 
@@ -62,8 +64,8 @@ def main():
     dispatcher.add_handler(CommandHandler("review", review))
     dispatcher.add_handler(CallbackQueryHandler(answer))
 
-    dispatcher.add_handler(CommandHandler('game', game))
-    dispatcher.add_handler(CallbackQueryHandler(answer))
+    #dispatcher.add_handler(CommandHandler('game', game))
+    #dispatcher.add_handler(CallbackQueryHandler(answer))
 
     # To start the bot:
     updater.start_polling()
@@ -151,19 +153,19 @@ def review(update: Update, context: CallbackContext) -> None:
 
 
 
-def game(update, context):
-    a, b = randint(1, 100), randint(1, 100)
-    update.message.reply_text('{} + {} = ?'.format(a, b),
-        reply_markup = InlineKeyboardMarkup([[
-                InlineKeyboardButton(str(s), callback_data = '{} {} {}'.format(a, b, s)) for s in range(a + b - randint(1, 3), a + b + randint(1, 3))
-            ]]))
+#def game(update, context):
+#    a, b = randint(1, 100), randint(1, 100)
+#    update.message.reply_text('{} + {} = ?'.format(a, b),
+#        reply_markup = InlineKeyboardMarkup([[
+#                InlineKeyboardButton(str(s), callback_data = '{} {} {}'.format(a, b, s)) for s in range(a + b - randint(1, 3), a + b + randint(1, 3))
+#            ]]))
 
-def answer(update, context):
-    a, b, s = [int(x) for x in update.callback_query.data.split()]
-    if a + b == s:
-        update.callback_query.edit_message_text('Correct! You must smarter than Grade 1 students :)')
-    else:
-        update.callback_query.edit_message_text('Wrong! OMG, you are even worse than Grade 1 students :(')
+#def answer(update, context):
+#    a, b, s = [int(x) for x in update.callback_query.data.split()]
+#    if a + b == s:
+#        update.callback_query.edit_message_text('Correct! You must smarter than Grade 1 students :)')
+#    else:
+#        update.callback_query.edit_message_text('Wrong! OMG, you are even worse than Grade 1 students :(')
 
 
 
