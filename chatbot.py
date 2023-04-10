@@ -155,7 +155,7 @@ emoji = {
     'scissors': '✌️'
 }
 
-def game(update, context):
+def game(update, bot):
     update.message.reply_text('剪刀石頭布！',
         reply_markup = InlineKeyboardMarkup([[
                 InlineKeyboardButton(emoji, callback_data = hand) for hand, emoji in emoji.items()
@@ -169,7 +169,7 @@ def judge(mine, yours):
     else:
         return '我輸了'
 
-def play(update, context):
+def play(update, bot):
     try:
         mine = random.choice(hands)
         yours = update.callback_query.data
