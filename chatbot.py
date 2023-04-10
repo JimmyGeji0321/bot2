@@ -12,8 +12,8 @@ import logging
 def db_connect():
     config = configparser.ConfigParser()
     config.read('config.ini')
-    db = pymysql.connect(host=config['AMAZONAWS']['HOST'], user=config['AMAZONAWS']['USER'],
-                         password=config['AMAZONAWS']['PASSWORD'], database=config['AMAZONAWS']['DATABASE'])
+    db = pymysql.connect(host=config['AMAZONS']['HOST'], user=config['AMAZONS']['USER'],
+                         password=config['AMAZONS']['PASSWORD'], database=config['AMAZONS']['DATABASE'])
     return db
 
 
