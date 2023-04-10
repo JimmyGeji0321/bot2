@@ -1,4 +1,6 @@
 # chatbot.py
+import random
+
 import pymysql
 from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext, CallbackQueryHandler
@@ -33,8 +35,9 @@ def add_review(movie_name, movie_review):
         cursor.execute(sql)
         db.commit()
         db.close()
+        return 1
     except:
-        print("Error")
+        return 0
 
 
 def main():
@@ -66,8 +69,8 @@ def main():
 
 def show_menu(update, context):
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text='display a photo', callback_data='photo')],
-        [InlineKeyboardButton(text='play a cooking video', callback_data='video')],
+        [InlineKeyboardButton(text='view a photo', callback_data='photo')],
+        [InlineKeyboardButton(text='watch a cooking video', callback_data='video')],
         [InlineKeyboardButton(text='read some movie reviews', callback_data='read')],
         [InlineKeyboardButton(text='write a movie review', callback_data='write')],
     ])
@@ -79,9 +82,11 @@ Please select the following buttons:
 def answer(update: Update, context: CallbackContext) -> None:
     msg = update.callback_query.data
     if msg == 'photo':
-        context.bot.send_photo(chat_id=update.effective_chat.id, photo=open('img/t1-2.jpg', 'rb'))
+        src = 'img/' + str(random.randint(1, 11)) + '.jpg'
+        context.bot.send_photo(chat_id=update.effective_chat.id, photo=open(src, 'rb'))
     elif msg == 'video':
-        context.bot.send_video(chat_id=update.effective_chat.id, video=open('video/2.mp4', 'rb'))
+        src = 'video/' + str(random.randint(1, 6)) + '.mp4'
+        context.bot.send_video(chat_id=update.effective_chat.id, video=open(src, 'rb'))
     elif msg == 'read':
         results = show_reviews()
         reviews = ''''''
@@ -99,7 +104,10 @@ def answer(update: Update, context: CallbackContext) -> None:
 def review(update: Update, context: CallbackContext) -> None:
     movie_name = context.args[0]
     movie_review = ' '.join(context.args[1:])
-    add_review(movie_name, movie_review)
+    if add_review(movie_name, movie_review) == 1:
+        context.bot.send_message(chat_id=update.effective_chat.id, text='''Your reviews have been saved successfully!!''')
+    else:
+        context.bot.send_message(chat_id=update.effective_chat.id, text='''Failed! Please use the correct format''')
 
 
 # def photo(update: Update, context: CallbackContext) -> None:
