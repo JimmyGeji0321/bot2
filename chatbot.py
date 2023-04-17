@@ -114,11 +114,6 @@ def review(update: Update, context: CallbackContext) -> None:
         update.message.reply_text("Please input the right command!")
 
 
-if __name__ == '__main__':
-    main()
-
-
-
 def maths(update, context):
     a, b = randint(1, 100), randint(1, 100)
     update.message.reply_text('{} + {} = ?'.format(a, b),
