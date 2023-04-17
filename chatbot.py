@@ -9,7 +9,13 @@ import configparser
 import logging
 
 
+hands = ['rock', 'paper', 'scissors']
 
+emoji = {
+    'rock': '👊',
+    'paper': '✋',
+    'scissors': '✌️'
+} 
 
 def db_connect():
     db = pymysql.connect(host='cloudcomputing.c8zsz8bm7sbi.us-east-1.rds.amazonaws.com', user='admin', password='swQ50wDD9xXEuGZwDpva', database='chatbot')
@@ -62,8 +68,8 @@ def main():
     dispatcher.add_handler(CommandHandler("photo", photo))
     dispatcher.add_handler(CommandHandler("video", video))
     dispatcher.add_handler(CommandHandler("review", review))
-    dispatcher.add_handler(CommandHandler('maths', maths))
-    dispatcher.add_handler(CallbackQueryHandler(answer))
+    dispatcher.add_handler(CommandHandler('game', game))
+    dispatcher.add_handler(CallbackQueryHandler(play))
     # To start the bot:
     updater.start_polling()
     updater.idle()
@@ -114,19 +120,29 @@ def review(update: Update, context: CallbackContext) -> None:
         update.message.reply_text("Please input the right command!")
 
 
-def maths(update, context):
-    a, b = randint(1, 100), randint(1, 100)
-    update.message.reply_text('{} + {} = ?'.format(a, b),
+
+
+def game(update, context):
+    update.message.reply_text('scissors..paper..rock！',
         reply_markup = InlineKeyboardMarkup([[
-                InlineKeyboardButton(str(s), callback_data = '{} {} {}'.format(a, b, s)) for s in range(a + b - randint(1, 3), a + b + randint(1, 3))
+                InlineKeyboardButton(emoji, callback_data = hand) for hand, emoji in emoji.items()
             ]]))
 
-def answer(update, context):
-    a, b, s = [int(x) for x in update.callback_query.data.split()]
-    if a + b == s:
-        update.callback_query.edit_message_text('Correct! You must smarter than Grade 1 students :)')
+def judge(mine, yours):
+    if mine == yours:
+        return 'tie'
+    elif (hands.index(mine) - hands.index(yours)) % 3 == 1:
+        return 'I win'
     else:
-        update.callback_query.edit_message_text('Wrong! OMG, you are even worse than Grade 1 students :(')
+        return 'I lose'
+
+def play(update, context):
+    try:
+        mine = random.choice(hands)
+        yours = update.callback_query.data
+        update.callback_query.edit_message_text('I go{}，you go{}，{}！'.format(emoji[mine], emoji[yours], judge(mine, yours)))
+    except Exception as e:
+        print(e)
 
 
 
