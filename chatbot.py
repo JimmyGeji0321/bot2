@@ -62,7 +62,7 @@ def main():
     dispatcher.add_handler(CommandHandler("photo", photo))
     dispatcher.add_handler(CommandHandler("video", video))
     dispatcher.add_handler(CommandHandler("review", review))
-    dispatcher.add_handler(CommandHandler('maths', game))
+    dispatcher.add_handler(CommandHandler('maths', maths))
     dispatcher.add_handler(CallbackQueryHandler(answer))
     # To start the bot:
     updater.start_polling()
@@ -119,7 +119,7 @@ if __name__ == '__main__':
 
 
 
-def game(update, context):
+def maths(update, context):
     a, b = randint(1, 100), randint(1, 100)
     update.message.reply_text('{} + {} = ?'.format(a, b),
         reply_markup = InlineKeyboardMarkup([[
